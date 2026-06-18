@@ -1,0 +1,28 @@
+name: Daily Commit
+
+on:
+  schedule:
+    # 16:00 UTC = 12:00 noon America/New_York (EDT). Fires at 11:00 local during EST.
+    # GitHub may delay scheduled runs by a few minutes up to ~1h under load.
+    - cron: "0 16 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create daily commit
+        env:
+          TZ: America/New_York
+        run: |
+          git config user.name "Chilaka Akhil"
+          git config user.email "75828601+canikhil12@users.noreply.github.com"
+          echo "Last active: $(date '+%Y-%m-%d %H:%M:%S %Z')" > activity.log
+          git add activity.log
+          git commit -m "Daily activity: $(date '+%Y-%m-%d')"
+          git push
